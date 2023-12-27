@@ -51,8 +51,15 @@ jobs:
           latest_tag=$(git tag --sort=taggerdate | tail -1)
           echo "Latest Tag: $latest_tag"
 
+          if [ -z "$latest_tag" ]; then
+            echo ::set-output name=latest_tag::v0.0.0
+            echo ::set-output name=increment::patch
+            exit 0
+          fi
+
           increment="patch"
           while read commit; do 
+            # echo "commit: $commit"; 
             if [[ $commit =~ ^BREAKING ]]; then
               increment="major"
               break
